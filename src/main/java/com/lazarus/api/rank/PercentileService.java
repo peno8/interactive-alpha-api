@@ -1,6 +1,7 @@
 package com.lazarus.api.rank;
 
 import com.alibaba.fastjson.JSON;
+import com.lazarus.api.metadata.MetadataService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +29,11 @@ public class PercentileService {
     @Value("${DATA_ROOT}")
     private String dataRoot;
 
-    @Value("${CURRENT_CQ}")
-    private String currentCq;
-
-    @Value("${PREV_CQ}")
-    private String prevCq;
-
     @Resource
     private ScreenerDefLoader loader;
+
+    @Resource
+    private MetadataService metadataService;
 
     private Map<String, Map<String, List<Percentile>>> percentiles = new HashMap<>();
 
@@ -81,7 +79,8 @@ public class PercentileService {
 
     @PostConstruct
     public void initialize() {
-        addByQuarter(currentCq);
+        addByQuarter(metadataService.getMetadata().CURRENT_QT);
+        addByQuarter(metadataService.getMetadata().LAST_QT);
     }
 
     public void addByQuarter(String cq) {
